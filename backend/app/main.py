@@ -4,6 +4,8 @@ from fastapi import FastAPI, HTTPException
 from app.schemas import ContentRequest, ContentResponse
 from app.services.content_generator import generate_content
 from app.models.ia_image import ImageGenerator
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI()
 
