@@ -1,5 +1,9 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Dict
+from pydantic import BaseModel, constr
+
+class ImageRequest(BaseModel):
+    prompt: constr(min_length=1, max_length=200)
 
 class ContentRequest(BaseModel):
     template_id: str = Field(..., description="Identifiant du template à utiliser")

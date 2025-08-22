@@ -1,4 +1,3 @@
-// src/components/GenerateForm.tsx
 import { useState } from "react";
 import { generateContent } from "../services/api";
 import ContentDisplay from "./ContentDisplay";
@@ -8,15 +7,25 @@ const GenerateForm = () => {
   const [goal, setGoal] = useState("");
   const [tone, setTone] = useState("");
   const [result, setResult] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const data = await generateContent({
-      template_id: "linkedin_post",
-      fields: { topic, goal, tone },
-      generate_image: true,
-    });
-    setResult(data);
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await generateContent({
+        template_id: "linkedin_post",
+        fields: { topic, goal, tone },
+        generate_image: true,
+      });
+      setResult(data);
+    } catch (err: any) {
+      setError(err.message || "Erreur lors de la génération");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -60,12 +69,14 @@ const GenerateForm = () => {
 
         <button
           type="submit"
-          className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          className={`px-4 py-2 rounded ${loading ? "bg-gray-400" : "bg-green-600 hover:bg-green-700"} text-white`}
+          disabled={loading}
         >
-          Générer
+          {loading ? "Génération en cours..." : "Générer"}
         </button>
       </form>
 
+      {error && <p className="text-red-500 mt-2">{error}</p>}
       {result && <ContentDisplay content={result.content} imageUrl={result.image_url} />}
     </div>
   );
