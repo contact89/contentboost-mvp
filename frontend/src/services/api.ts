@@ -45,4 +45,10 @@ export const getMe = async () => {
   return response.data; // { username, roles... }
 };
 
+// 📌 Récupérer tous les contenus générés par l’utilisateur connecté
+export const getContents = async () => {
+  const response = await api.get("/contents");
+  return response.data; // { contents: [...] }
+};
+
 export default api;

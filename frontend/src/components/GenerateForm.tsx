@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ⬅️ ajouté
 import { generateContent } from "../services/api";
 import ContentDisplay from "./ContentDisplay";
 
@@ -9,6 +10,8 @@ const GenerateForm = () => {
   const [result, setResult] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const navigate = useNavigate(); // ⬅️ ajouté
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +24,7 @@ const GenerateForm = () => {
         generate_image: true,
       });
       setResult(data);
+      navigate("/dashboard"); // ⬅️ redirige vers Dashboard
     } catch (err: any) {
       setError(err.message || "Erreur lors de la génération");
     } finally {

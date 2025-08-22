@@ -2,6 +2,9 @@
 
 import os
 import requests
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class ImageGenerator:
     def __init__(self):
@@ -10,6 +13,9 @@ class ImageGenerator:
 
         if not self.api_key:
             raise ValueError("HF_API_KEY non définie dans les variables d'environnement")
+        # self.api_key = os.getenv("HF_API_KEY")
+        # if not self.api_key:
+        #     print("⚠️ Attention: HF_API_KEY non définie, le générateur d’image ne fonctionnera pas")
 
         self.headers = {
             "Authorization": f"Bearer {self.api_key}",

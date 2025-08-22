@@ -1,6 +1,9 @@
 from pydantic import BaseModel, Field
 from typing import Optional, Dict
 from pydantic import BaseModel, constr
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class ImageRequest(BaseModel):
     prompt: constr(min_length=1, max_length=200)

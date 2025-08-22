@@ -1,5 +1,8 @@
 from fastapi import FastAPI, HTTPException, Depends, status
 from fastapi.security import OAuth2PasswordRequestForm
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.schemas import ContentRequest, ContentResponse
 from app.services.content_generator import generate_content
 from app.models.ia_image import ImageGenerator
@@ -19,6 +22,9 @@ load_dotenv()
 app = FastAPI()
 
 image_generator = ImageGenerator()
+
+# Stockage en mémoire des contenus générés
+generated_contents = []  # List[dict] : {username, content, image_url}
 
 @app.get("/")
 async def read_root():
@@ -40,7 +46,24 @@ def generate(req: ContentRequest, current_user: User = Depends(get_current_activ
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Erreur génération image: {e}")
 
+    # Sauvegarde dans le stockage mémoire
+    generated_contents.append({
+        "username": current_user.username,
+        "content": content,
+        "image_url": image_url
+    })
+
     return ContentResponse(content=content, image_url=image_url)
+
+@app.get("/contents")
+def get_contents(current_user: User = Depends(get_current_active_user)):
+    """
+    Retourne tous les contenus générés par l'utilisateur connecté.
+    """
+    user_contents = [
+        item for item in generated_contents if item["username"] == current_user.username
+    ]
+    return {"contents": user_contents}
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
